@@ -13,6 +13,8 @@ import seedu.pocketpal.frontend.ui.UI;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.Arrays;
+import java.util.Collections;
 
 /**
  * Represents the delete feature in PocketPal. Users may specify
@@ -22,10 +24,10 @@ import java.util.logging.Logger;
 public class DeleteCommand extends Command {
     private static final Logger logger = Logger.getLogger(DeleteCommand.class.getName());
 
-    private final Integer entryId;
+    private final Integer[] entryIds;
 
-    public DeleteCommand(Integer inputId) {
-        this.entryId = inputId;
+    public DeleteCommand(Integer[] inputIds) {
+        this.entryIds = inputIds;
     }
 
     /**
@@ -37,18 +39,31 @@ public class DeleteCommand extends Command {
     @Override
     public void execute(UI ui, Backend backend) throws InvalidEntryIdException {
         // delete request
-        Request requestDelete = new Request(RequestMethod.DELETE, String.valueOf(entryId));
-        Response responseDelete = backend.requestEndpointEntry(requestDelete);
-        if (responseDelete.getResponseStatus() == ResponseStatus.NOT_FOUND) {
-            logger.log(Level.WARNING, "Input entry ID is invalid");
-            throw new InvalidEntryIdException(MessageConstants.MESSAGE_INVALID_ID);
+        Arrays.sort(entryIds, Collections.reverseOrder());
+        Integer[] uniqueEntryIds = Arrays.stream(entryIds).distinct().toArray(Integer[]::new);
+        for(int entryId: uniqueEntryIds){
+            System.out.println(entryId);
+            Request requestGet = new Request(RequestMethod.GET, String.valueOf(entryId));
+            Response responseGet = backend.requestEndpointEntry(requestGet);
+            if (responseGet.getResponseStatus() == ResponseStatus.NOT_FOUND) {
+                logger.log(Level.WARNING, "Input entry ID is invalid");
+                throw new InvalidEntryIdException(MessageConstants.MESSAGE_INVALID_ID);
+            }
         }
-
-        Entry deletedEntry = EntryParser.deserialise(responseDelete.getData());
-        ui.printExpenditureDeleted(deletedEntry);
+        for(int entryId: uniqueEntryIds){
+            System.out.println(entryId);
+            Request requestDelete = new Request(RequestMethod.DELETE, String.valueOf(entryId));
+            Response responseDelete = backend.requestEndpointEntry(requestDelete);
+            if (responseDelete.getResponseStatus() == ResponseStatus.NOT_FOUND) {
+                logger.log(Level.WARNING, "Input entry ID is invalid");
+                throw new InvalidEntryIdException(MessageConstants.MESSAGE_INVALID_ID);
+            }
+            Entry deletedEntry = EntryParser.deserialise(responseDelete.getData());
+            ui.printExpenditureDeleted(deletedEntry);
+        }
     }
 
-    public Integer getEntryId() {
-        return this.entryId;
+    public Integer getEntryId(Integer entryId) {
+        return this.entryIds[entryId];
     }
 }

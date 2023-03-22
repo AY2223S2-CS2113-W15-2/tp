@@ -178,21 +178,25 @@ public class Parser {
             logger.log(Level.WARNING, "Index of the expense not specified");
             throw new MissingArgumentsException(MessageConstants.MESSAGE_INVALID_ID);
         }
-        String[] argumentsArray = arguments.split(" ", 2);
+        String[] argumentsArray = arguments.split(" ");
         assert argumentsArray.length >= 1 : "User input must contain at least one argument";
-        String expenseId = argumentsArray[0];
+        // String expenseId = argumentsArray[0];
         int expenseIdInt;
+        Integer[] expenseIds = new Integer[argumentsArray.length];
         try {
-            expenseIdInt = Integer.parseInt(expenseId);
-            assert expenseId.matches("\\d+") : "Expense ID must be an integer";
-            logger.log(Level.INFO, "Removing specified expense id {0} from list", expenseId);
+            for(int i = 0; i < argumentsArray.length; i++){
+                expenseIdInt = Integer.parseInt(argumentsArray[i]);
+                assert argumentsArray[i].matches("\\d+") : "Expense ID must be an integer";
+                logger.log(Level.INFO, "Removing specified expense id {0} from list", argumentsArray[i]);
+                expenseIds[i] = expenseIdInt;
+            }
             // do something with taskId
         } catch (NumberFormatException e) {
             logger.log(Level.WARNING, "Index of the expense specified is not an integer");
             throw new InvalidArgumentsException(MessageConstants.MESSAGE_INVALID_ID);
         }
         logger.exiting(Parser.class.getName(), "parseDeleteCommand(arguments)");
-        return new DeleteCommand(expenseIdInt);
+        return new DeleteCommand(expenseIds);
     }
 
     private Command parseHelpCommand() {
