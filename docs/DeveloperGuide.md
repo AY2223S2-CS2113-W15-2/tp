@@ -316,6 +316,40 @@ The Sequence Diagram below illustrates the interactions within the `Parser` comp
 
 ![StorageSequenceDiagram](./static/StorageSequenceDiagram.png)
 
+## Edit Command
+
+### Implementation
+
+**Step 1.** User runs Edit command, specifying the ID of the entry to edit, as well as the new attributes of the respective
+fields.
+
+**Step 2.** Parser extracts the relevant argument and returns a EditCommand object.
+
+**Step 3.** The execute method of the EditCommand is called and a Request object is created. This request object specifies
+the modifications of the various fields.
+
+**Step 4.** The Request object is then parsed as an argument to the Backend Class, which parses this request as an argument
+to a method in the EntryEndpoint class.
+
+**Step 5.** The EntryEndpoint class then finds and modifies the entry as specified by the user.
+
+**Step 6.** Upon successful completion of the modification, the EntryEndpoint class returns a Response object to the Backend
+class. The Response object contains the updated fields of the entry.
+
+**Step 7.** The Backend class calls the save() method to update the Storage class with the edited entry.It then returns
+the Response object to the execute function in the EditCommand object.
+
+**Step 8.** The printExpenditureEdited method under the UI class is then called in the execute function and an
+acknowledgement message is printed to the user.
+
+### Overall class diagram for editing an Entry
+
+![img.png](EditCommandClassDiagram.png)
+
+### Overall sequence diagram for editing an Entry
+
+![img_1.png](EditCommandSequenceDiagram.png)
+
 ## Product scope
 
 ### Target user profile

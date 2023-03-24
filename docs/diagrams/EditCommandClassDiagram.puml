@@ -1,0 +1,39 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+'abstract class AbstractList
+'abstract AbstractCollection
+'interface List
+'interface Collection
+'
+'List <|-- AbstractList
+'Collection <|-- AbstractCollection
+'
+UI <.. EditCommand
+Backend <.. EditCommand
+EditCommand *-- Request
+EditCommand *-- Response
+
+class EditCommand {
+    - expenseId : int
+    - newDescription : String
+    - newPrice : String
+    - newCategory : String
+    + EditCommand(expenseId : int, newDescription : String, newPrice : String,
+                newCategory : String)
+    + execute(ui : UI, backend : Backend)
+}
+
+class Request {
+}
+
+class UI {
+}
+
+class Response{
+}
+
+class Backend{
+}
+
+@enduml
